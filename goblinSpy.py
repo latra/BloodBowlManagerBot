@@ -1,14 +1,15 @@
-import sqlite3, math, js2py, os, requests, models, bloodBowl
+import sqlite3, math, js2py, os, requests, models, bloodBowl, texts, datetime
 class GoblinSpy:
-    def __init__(self, discord_id, league = None, tournament = None, goblin_token = None):
+    def __init__(self, discord_id, league = None, tournament_name = None, goblin_token = None, language = None):
         self.league_name = league
         self.discord_id = discord_id
-        self.tournament = tournament
+        self.language = language
+        self.tournament_name = tournament_name
         self.goblin_token = goblin_token
         self.database = sqlite3.connect(os.getenv('SQLITE_CONNECTION'))
         self.recover_goblin()
     def __str__(self):
-        return ('Discord Server: %s - League: %s - Tournament: %s - Goblin: %s' % (self.discord_id, self.league_name, self.tournament, self.goblin_token))
+        return ('Discord Server: %s - League: %s - Tournament: %s - Goblin: %s' % (self.discord_id, self.league_name, self.tournament_name, self.goblin_token))
     def recover_goblin(self):
         # Recover discord configuration info from database 
         cursor = self.database.cursor()
@@ -68,7 +69,7 @@ class GoblinSpy:
     def read_tournament(self, json):
         # Se recuperan los datos del JSON 
         league = models.League(self.league_name)
-        tournament = models.Tournament(discord_id=self.discord_id, tournament_name=self.tournament)
+        tournament = models.Tournament(discord_id=self.discord_id, tournament_name=self.tournament_name)
         # Ultima actualizacion de goblin spy
         tournament.last_update = json["Info"]["rows"][0][3]
         # Se guardan las instancias de equipos 
@@ -78,7 +79,7 @@ class GoblinSpy:
         ranking_data = json["LeagueStandings"]["rows"]
         for team_data in ranking_data:
             # team[10] es la casilla del coachbame. Get_Coach revisa si el nombre está inscrito en la DB de usuarios
-            recover_coach = self.get_coach(team_data[10])
+            recover_coach = self.get_coach_by_bb2_coach(team_data[10])
             coach = models.Coach(team_data[10], team_data[10])
             if recover_coach != team_data[10]:
                 coach.display_name = recover_coach[0]
@@ -104,37 +105,50 @@ class GoblinSpy:
             tournament_type = schedule_data[0][7]
             schedule = models.Schedule()
             for match_data in schedule_data:
-                match = models.Match(local_team=all_teams[match_data[19]], visitor_team=all_teams[match_data[25]], local_score=match_data[29], visitor_score=match_data[30], status=match_data[10])
+                match = models.Match(local_team=all_teams[match_data[19]], visitor_team=all_teams[match_data[25]], local_score=match_data[29], visitor_score=match_data[30]
+                        , status=match_data[10], contest_id = match_data[6])
                 if match.status == "scheduled":
                     if schedule.current_round == 0:
                         schedule.current_round = match_data[8]
                     # Recupera si los usuarios de dicord han establecido una hora para jugar
-                    match.programmed_time = self.get_programmed_time(match)
+                    self.get_programmed_time(match)
                 schedule.add_match(match_data[8], match)
             tournament.schedule = schedule
         league.add_tournament(tournament)
         return league
-    def get_programmed_time(self, match):
-        return ""
-    def get_coach(self, bb_coach):
+
+    def get_coach_by_discord(self, discord_user_id):
+        # Recupera el nombre dentro del bloodbowl a partir del nombre de discord si estaba registrado
+        query = "SELECT coachName FROM coaches WHERE idDiscord = '%s' AND discordUserId = '%s'" % (self.discord_id, discord_user_id)
+        cursor = self.database.cursor()
+        result = cursor.execute(query).fetchone()
+        cursor.close()
+        if result: return result[0]
+        else: return None
+    def get_coach_by_bb2_coach(self, bb_coach):
         # Recovers a discord user name from coach if he's already registered (uning !iam command)
-        query = "SELECT discordName, idDiscord FROM coaches WHERE coachName = '%s' AND idDiscord = '%s';" % (bb_coach, self.discord_id)
+        query = "SELECT discordName, discordUserId FROM coaches WHERE coachName = '%s' AND idDiscord = '%s';" % (bb_coach, self.discord_id)
         cursor = self.database.cursor()
         result = cursor.execute(query).fetchone()
         cursor.close()
         if result: return result
         else: return bb_coach
-
+    def is_coach_registered(self, bb_coach):
+        coach = self.get_coach_by_bb2_coach(bb_coach)
+        if coach == bb_coach:
+            return False
+        else:
+            return coach
     def set_coach(self, bb_coach, discord_name, discord_user_id):
-        coach = self.get_coach(bb_coach)
-        if coach != bb_coach and coach[0] != discord_name: 
-            return "This coach is already registered. If it's your coach name, talk with an administrator."
+        coach = self.is_coach_registered(bb_coach)
+        if coach and coach[0] != discord_name: 
+            return self.language.ERROR_ALREADY_REGISTERED
         elif self.get_user_registerd(discord_name): 
             query = "UPDATE coaches SET coachName = '%s' WHERE discordName = '%s' AND idDiscord='%s';" % (bb_coach,discord_name, self.discord_id)
-            result =  "Your coach name has been updated"
+            result =  self.language.SUCCESS_IAM_UPDATE
         else: 
             query = "INSERT INTO coaches (idDiscord, coachName, discordName, discordUserId) VALUES ('%s', '%s', '%s', '%s')" % (self.discord_id, bb_coach, discord_name, discord_user_id)
-            result = "You has been registered successfully!"
+            result = self.language.SUCCESS_IAM_REGISTER
         cursor = self.database.cursor()
         cursor.execute(query)
         self.database.commit()
@@ -146,6 +160,62 @@ class GoblinSpy:
         cursor = self.database.cursor()
         result = cursor.execute(query).fetchone()
         cursor.close()
-        print(result)
         if result: return result
         else: return None
+    def get_programmed_time(self, match):
+        query = "SELECT proposedDate FROM proposed_matches WHERE idContest = '%s' AND idDiscord='%s';" % (match.contest_id, self.discord_id)
+        cursor = self.database.cursor()
+        result = cursor.execute(query).fetchone()
+        cursor.close()
+        if result:
+            match.programmed_time =  datetime.datetime.strptime(result[0], "%d/%m/%Y %H:%M")
+
+            return True
+        else: return None
+    def get_player_next_match(self, round_matchs, user_discord_id):
+        for match in round_matchs:
+            if match.local_team.coach.user_discord_id == str(user_discord_id) or match.visitor_team.coach.user_discord_id == str(user_discord_id):
+                return match
+        return None
+    def get_programmed_user_info(self, match_contest_id):
+        query = "SELECT proposedDate, leaderDiscordId, invitedDiscordId, accepted FROM proposed_matches WHERE idContest = '%s'" % match_contest_id
+        cursor = self.database.cursor()
+        result = cursor.execute(query).fetchone()
+        cursor.close()
+        if result: return (result[0], result[1], result[2], True if result[3] == 1 else False)
+        else: return None
+    def get_pendent_invitations(self, invited_discord_id):
+        query = "SELECT proposedDate, leaderDiscordId, accepted, idContest FROM proposed_matches WHERE invitedDiscordId = '%s' AND idDiscord = '%s';" % (invited_discord_id, self.discord_id)
+        cursor = self.database.cursor()
+        result = cursor.execute(query).fetchone()
+        cursor.close()
+        if result: return (result[0], result[1], True if result[2] == 1 else False, result[3])
+        else: return None
+    def set_matchtime(self, match, proposed_date, user_discord_id):
+        invite_discord_id = match.local_team.coach.user_discord_id if match.local_team.coach.user_discord_id != user_discord_id else match.visitor_team.coach.user_discord_id
+        if match.programmed_time:
+            programmed_info = self.get_programmed_user_info(match.contest_id)
+            # Si es el creador o es el invitado pero el partido ya esta aceptado, se actualiza la hora y se marca como accepted == false
+            if programmed_info[1] == user_discord_id or (programmed_info[3] and programmed_info[2] == user_discord_id):
+                #UPDATE
+                query = "UPDATE proposed_matches SET proposedDate='%s', accepted=0 WHERE idContest = '%s'" % (proposed_date, match.contest_id)
+                response =  ("UPDATE", invite_discord_id)
+            else: 
+                return ("ERROR", )
+        else:
+            #CREATE
+            response = ("CREATED", invite_discord_id)
+            valid = 0 if invite_discord_id else 1
+            query = "INSERT INTO proposed_matches (idDiscord, accepted, proposedDate, idContest, leaderDiscordId, invitedDiscordId) VALUES ('%s', %i, '%s', '%s', '%s', '%s')" %  (self.discord_id, valid, proposed_date, match.contest_id, user_discord_id, invite_discord_id)
+        match.programmed_time = proposed_date
+        cursor = self.database.cursor()
+        cursor.execute(query)
+        self.database.commit()
+        cursor.close()
+        return response
+    def accept_match(self, id_match):
+        query = "UPDATE proposed_matches SET accepted = 1 WHERE idContest = '%s';" % id_match
+        cursor = self.database.cursor()
+        cursor.execute(query)
+        self.database.commit()
+        cursor.close()

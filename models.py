@@ -1,5 +1,5 @@
 class Match:
-    def __init__(self, local_team = None, visitor_team= None, local_score = 0, visitor_score = 0, status = "", played_time = "", programmed_time = ""):
+    def __init__(self, local_team = None, visitor_team= None, local_score = 0, visitor_score = 0, status = "", played_time = "", programmed_time = "", contest_id = ""):
         self.id = 0
         self.local_team = local_team
         self.visitor_team = visitor_team
@@ -8,6 +8,8 @@ class Match:
         self.status = status
         self.played_time = played_time
         self.programmed_time = programmed_time
+        self.accepted = False
+        self.contest_id = contest_id
 class Team:
     def __init__(self, coach = None, team_name = "", race = "", wins = 0, loses = 0, draws = 0, rank = 0, td = 0):
         self.id = 0
@@ -43,7 +45,7 @@ class Tournament:
         self.schedule = schedule
         self.last_update = last_update
 class Coach:
-    def __init__(self, coach_name = "", display_name = "", user_discord_id = ""):
+    def __init__(self, coach_name = "", display_name = "", user_discord_id = None):
         self.id = 0
         self.coach_name = coach_name
         self.display_name = display_name
@@ -58,10 +60,10 @@ class Schedule:
     def __init__(self, current_round = 0):
         self.current_round = current_round
         self.schedule = {}
-    def add_match(self, competition_round, match):
+    def add_match(self, competition_round, contest_id):
         if competition_round not in self.schedule.keys() or not self.schedule[competition_round]:
             self.schedule[competition_round] = []
-        self.schedule[competition_round].append(match)
+        self.schedule[competition_round].append(contest_id)
 class History:
     def __init__(self, matches = []):
         self.matches = matches

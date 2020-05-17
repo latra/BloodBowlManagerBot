@@ -37,8 +37,17 @@ class Bot:
         async def round(ctx):
             await commandModule.Commands(ctx).round()
         @self.client.command()
-        async def iam(ctx):
+        async def Iam(ctx):
             await commandModule.Commands(ctx).this_is_my_team()
+        @self.client.command()
+        async def nextMatch(ctx):
+            await commandModule.Commands(ctx).my_next_match()
+        @self.client.command()
+        async def IWillPlay(ctx):
+            await commandModule.Commands(ctx).establish_date_match()
+        @self.client.command()
+        async def acceptMatch(ctx):
+            await commandModule.Commands(ctx).accept_time()
 
         
     def run(self):
