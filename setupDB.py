@@ -2,15 +2,33 @@
 from dotenv import load_dotenv
 import sqlite3, os
 
-QUERYS = [  'CREATE TABLE "tournaments" ' +
-                '("id"  INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"idDiscord"  TEXT(30) NOT NULL,"league"  TEXT(100),"tournament"  TEXT(100),"goblinValue"  TEXT(100));',
-            'CREATE TABLE "coaches" ' +
-                '( "id"  INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "idDiscord"  TEXT NOT NULL, "coachName"  TEXT, "discordName"  TEXT, CONSTRAINT "idDiscord");'
-        ]
-
-
-
-
+QUERYS = [  
+        'CREATE TABLE "SERVERS" ('+
+        '	"discordServerId"	INTEGER NOT NULL,'+
+        '	"leagueName"	TEXT NOT NULL,'+
+        '	"tournamentName"	TEXT NOT NULL,'+
+        '	"goblinToken"	TEXT NOT NULL,'+
+        '	PRIMARY KEY("discordServerId")'+
+        ')',
+        'CREATE TABLE "USERS" (' +
+        '	"discordServerId"	INTEGER NOT NULL,' +
+        '	"discordClientId"	INTEGER NOT NULL,' +
+        '	"discordClientName"	TEXT NOT NULL,' +
+        '	"coachName"	TEXT NOT NULL,' +
+        '	PRIMARY KEY("discordClientId","discordServerId"),' +
+        '   FOREIGN KEY("discordServerId") REFERENCES "SERVERS"("discordServerId") ON DELETE CASCADE' +
+        ')',
+        'CREATE TABLE "MATCHES" (' +
+        '	"matchContestId"	INTEGER NOT NULL UNIQUE,' +
+        '	"leaderDiscordUserId"	INTEGER,' +
+        '	"invitedDiscordUserId"	INTEGER,' +
+        '	"discordServerId"	INTEGER NOT NULL,' +
+        '	"accepted"	INTEGER DEFAULT 0,' +
+        '	"proposedTime"	TEXT,' +
+        '	PRIMARY KEY("matchContestId"),' +
+        '	FOREIGN KEY("discordServerId") REFERENCES "SERVERS"("discordServerId") ON DELETE CASCADE' +
+        ');'
+]
 
 load_dotenv()
 connect = sqlite3.connect(os.getenv('SQLITE_CONNECTION'))
