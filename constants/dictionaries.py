@@ -1,3 +1,4 @@
+import constants.texts as texts
 def get_race_emoji(race_id):
 
     #This dict should be in static file
@@ -14,5 +15,7 @@ def get_ranking_emoji(position_num):
     if position: return position
     else: return "#%i" % position_num
 
-
+def get_language(language):
+    languages_dict = {'EN':texts.EN(), 'ES':texts.ES()}
+    return languages_dict.get(language)
     

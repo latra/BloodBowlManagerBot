@@ -1,7 +1,7 @@
 import re, os, sys, requests, datetime
 import discord
 from discord.utils import get
-import crud, goblinSpy, constants.emojis as emojis, constants.texts as texts
+import crud, goblinSpy, constants.dictionaries as dictionaries, constants.texts as texts
 
 class Commands:
     def __init__(self, ctx):
@@ -17,6 +17,7 @@ class Commands:
             self.league_name = saved_data.league_name
             self.tournament_name = saved_data.tournament_name
             self.goblin_token = saved_data.goblin_token
+            self.language =  dictionaries.get_language(saved_data.language)
         self.goblin = goblinSpy.GoblinSpy(self.goblin_token, self.crud)
     #region COMMANDS
     #region COMMAND - HELP
@@ -85,7 +86,8 @@ class Commands:
                 if len(command) >= 3:
                     # Add the server to DB and reutn OK
                     goblin_token = self.goblin.get_goblin_token(command[1], command[2])
-                    if self.crud.create_config(self.discord_id, command[1], command[2], goblin_token): await self.ctx.send(content=self.language.SUCCESS_SERVER_CONFIGURED)
+                    print(self.ctx.message.channel.id)
+                    if self.crud.create_config(self.discord_id, command[1], command[2], goblin_token, self.ctx.message.channel.id): await self.ctx.send(content=self.language.SUCCESS_SERVER_CONFIGURED)
                     else: await self.ctx.send(content=self.language.ERROR_DEFAULT)
                 else:
                     # Syntax error message
@@ -111,29 +113,32 @@ class Commands:
         else:
             #Get data from GoblinSpy
             league = self.goblin.get_goblin_generic_data(self.discord_id)
-            tournament = league.tournaments[self.tournament_name]
-            if tournament:
-                teams = ""
-                coach = ""
-                ranking = ""
-                for team_position in tournament.ranking.ranking:
-                    race_logo = get(self.ctx.message.guild.emojis, name = tournament.ranking.ranking[team_position].race)
-                    if not race_logo: race_logo = ":grey_question:"
-                    teams += "%s %s\n\n" %(race_logo, tournament.ranking.ranking[team_position].team_name)
-                    coach += "%s\n\n" % (tournament.ranking.ranking[team_position].coach.display_name)
-                    ranking += "%s\n\n" % (emojis.get_ranking_emoji(team_position))
-                
+            if league:
+                tournament = league.tournaments[self.tournament_name]
+                if tournament:
+                    teams = ""
+                    coach = ""
+                    ranking = ""
+                    for team_position in tournament.ranking.ranking:
+                        race_logo = get(self.ctx.message.guild.emojis, name = tournament.ranking.ranking[team_position].race)
+                        if not race_logo: race_logo = ":grey_question:"
+                        teams += "%s %s\n\n" %(race_logo, tournament.ranking.ranking[team_position].team_name)
+                        coach += "%s\n\n" % (tournament.ranking.ranking[team_position].coach.display_name)
+                        ranking += "%s\n\n" % (dictionaries.get_ranking_emoji(team_position))
+                    
 
-                embed = discord.Embed(
-                   colour = discord.Colour.red(),
-                   description = self.language.LAST_UPDATE % tournament.last_update,    
-                   title = "Teams on %s" % self.tournament_name,
-                )
-                embed.add_field(name = ":trophy:", value=ranking, inline=True)
-                embed.add_field(name = self.language.TEAM_NAME, value=teams, inline=True)
-                embed.add_field(name = self.language.COACH, value=coach, inline=True)
+                    embed = discord.Embed(
+                    colour = discord.Colour.red(),
+                    description = self.language.LAST_UPDATE % tournament.last_update,    
+                    title = "Teams on %s" % self.tournament_name,
+                    )
+                    embed.add_field(name = ":trophy:", value=ranking, inline=True)
+                    embed.add_field(name = self.language.TEAM_NAME, value=teams, inline=True)
+                    embed.add_field(name = self.language.COACH, value=coach, inline=True)
 
-                await self.ctx.send(embed=embed)
+                    await self.ctx.send(embed=embed)
+                else:
+                    await self.ctx.send(content=self.language.ERROR_DATA_NOT_FOUND)
             else:
                 await self.ctx.send(content=self.language.ERROR_DATA_NOT_FOUND)
     async def round(self):
@@ -254,7 +259,8 @@ class Commands:
                         next_match = self.goblin.get_player_next_match(tournament.schedule.schedule[tournament.schedule.current_round], self.ctx.message.author.id)
                         rival_id = next_match.local_team.coach.user_discord_id if self.ctx.message.author.id != next_match.local_team.coach.user_discord_id else next_match.visitor_team.coach.user_discord_id
                         if next_match and next_match.status == 'scheduled':
-                            db_programmed_time = self.crud.create_or_update_match_programmed_time(self.discord_id, next_match.contest_id, command, self.ctx.message.author.id, rival_id)
+                            db_programmed_time = self.crud.create_or_update_match_programmed_time(self.discord_id, next_match.contest_id, 
+                                datetime.datetime.strftime(setted_time, '%Y-%m-%d %H:%M'), self.ctx.message.author.id, rival_id, next_match.local_team.team_name, next_match.visitor_team.team_name)
                             await self.ctx.send(content=self.language.ERROR_ESTABLISHDATE_INVITED if not db_programmed_time['status'] else self.language.SUCCESS_ESTABLISHDATE_UPDATE if db_programmed_time['action'] == "UPDATED" else self.language.SUCCESS_ESTABLISHDATE_REGISTER)
                             # If it's created or updated, we will send a MD message notifying to the other user
                             invited_user = self.ctx.message.guild.get_member(rival_id)
@@ -285,3 +291,17 @@ class Commands:
                 #already accepted
                 await self.ctx.send(self.language.ERROR_ACCEPT_NOMATCH)
     #endregion
+    async def change_language(self):
+        if not self.goblin.goblin_token:
+            await self.ctx.send(content=self.language.ERROR_NOT_CONFIGURED)
+        else:
+            command = self.ctx.message.content.split()
+            if len(command) > 1 and dictionaries.get_language(command[1]):
+                if self.crud.change_language(self.ctx.message.author.guild.id, command[1]):
+                    self.language = dictionaries.get_language(command[1])
+                    await self.ctx.send(self.language.LANGUAGE_UPDATED)
+                else:
+                    await self.ctx.send(self.language.ERROR_DEFAULT)
+            else:
+                await self.ctx.send(self.language.ERROR_LANGUAGE_INVALID)
+        

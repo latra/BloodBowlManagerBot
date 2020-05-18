@@ -15,14 +15,14 @@ class Crud:
         cursor.close()
 
         if result:
-            return models.DBServer(result[0], result[1], result[2], result[3])
+            return models.DBServer(result[0], result[1], result[2], result[3], result[4], result[5])
         else:
             return None
 
-    def create_config(self, discord_server_id, league_name, tournament_name, token):
+    def create_config(self, discord_server_id, league_name, tournament_name, token, channel_id):
         #Creates a new entry on tournaments table. Used when the bot is configured on a new server
         try:
-            query = "INSERT INTO SERVERS (discordServerId, leagueName, tournamentName, goblinToken) VALUES (%i, '%s', '%s', '%s');" % (discord_server_id, league_name, tournament_name, token)
+            query = "INSERT INTO SERVERS (discordServerId, leagueName, tournamentName, goblinToken, discordChannelId) VALUES (%i, '%s', '%s', '%s', %i);" % (discord_server_id, league_name, tournament_name, token, channel_id)
             cursor = self.database.cursor()
             cursor.execute(query)
             self.database.commit()
@@ -91,7 +91,7 @@ class Crud:
             return models.DBMatch(result[0], result[1], result[2], result[3], result[4], result[5] )
         else:
             return None
-    def create_or_update_match_programmed_time(self, discord_server_id, match_contest_id, proposed_date, leader_discord_user_id, invited_discord_user_id, accepted = 0):
+    def create_or_update_match_programmed_time(self, discord_server_id, match_contest_id, proposed_date, leader_discord_user_id, invited_discord_user_id, local_team_name="", visitor_team_name="", accepted = 0):
         #Creates a new entry on matches table or update one
         if not invited_discord_user_id:
             invited_discord_user_id = -1
@@ -103,7 +103,7 @@ class Crud:
         elif match:
             return {'status':False, 'action':None}
         elif not match:
-            query = "INSERT INTO MATCHES (matchContestId, leaderDiscordUserId, InvitedDiscordUserId, discordServerId, accepted, proposedTime) VALUES ('%s', %i, %i, %i, %i, '%s');" % (match_contest_id, leader_discord_user_id, invited_discord_user_id, discord_server_id, accepted, proposed_date)
+            query = "INSERT INTO MATCHES (matchContestId, leaderDiscordUserId, InvitedDiscordUserId, discordServerId, accepted, proposedTime, localTeamName, visitorTeamName) VALUES ('%s', %i, %i, %i, %i, '%s', '%s', '%s');" % (match_contest_id, leader_discord_user_id, invited_discord_user_id, discord_server_id, accepted, proposed_date, local_team_name, visitor_team_name)
             action = "CREATED"
         try:
             cursor = self.database.cursor()
@@ -116,6 +116,40 @@ class Crud:
     def accept_match_programmed_time(self, discord_server_id, match_contest_id):
         #Changes the accepted status to one of the selected match
         query = "UPDATE MATCHES SET accepted = 1 WHERE matchContestId='%s' AND discordServerId = %i;" % (match_contest_id, discord_server_id)
+        try:
+            cursor = self.database.cursor()
+            cursor.execute(query)
+            self.database.commit()
+            cursor.close()
+            return True
+        except:
+            return False
+    def recover_match_programmed_time_close(self, maximum_date):
+        # Recovers all accepted matches 
+        query = "SELECT * FROM MATCHES INNER JOIN SERVERS ON MATCHES.discordServerId = SERVERS.discordServerId AND datetime(proposedTime) < datetime('%s');" % maximum_date
+        cursor = self.database.cursor()
+        cursor.execute(query)
+        result = cursor.fetchall()
+        cursor.close()
+        if result:
+            response = []
+            for row in result:
+                response.append(models.DBMatchJServer(row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[9], row[10], row[11],row[12],row[13]))
+            return response
+        else:
+            return None
+    def delete_match_programmed_time(self, match_contest_id):
+        query = "DELETE FROM MATCHES WHERE matchContestId='%s'" % match_contest_id
+        try:
+            cursor = self.database.cursor()
+            cursor.execute(query)
+            self.database.commit()
+            cursor.close()
+            return True
+        except:
+            return False
+    def change_language(self, discord_server_id, language):
+        query = "UPDATE SERVERS SET language = '%s' WHERE discordServerId='%s'" % (language, discord_server_id)
         try:
             cursor = self.database.cursor()
             cursor.execute(query)

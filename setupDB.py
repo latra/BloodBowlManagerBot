@@ -7,7 +7,9 @@ QUERYS = [
         '	"discordServerId"	INTEGER NOT NULL,'+
         '	"leagueName"	TEXT NOT NULL,'+
         '	"tournamentName"	TEXT NOT NULL,'+
-        '	"goblinToken"	TEXT NOT NULL,'+
+        '	"goblinToken"	TEXT NOT NULL,' +
+        '	"discordChannelId"	INTEGER,'+
+	    '   "language"	TEXT DEFAULT \'EN\',' + 
         '	PRIMARY KEY("discordServerId")'+
         ')',
         'CREATE TABLE "USERS" (' +
@@ -25,9 +27,12 @@ QUERYS = [
         '	"discordServerId"	INTEGER NOT NULL,' +
         '	"accepted"	INTEGER DEFAULT 0,' +
         '	"proposedTime"	TEXT,' +
+        '   "localTeamName"	TEXT,' +'
+	    '   "visitorTeamName"	TEXT,' +
         '	PRIMARY KEY("matchContestId"),' +
         '	FOREIGN KEY("discordServerId") REFERENCES "SERVERS"("discordServerId") ON DELETE CASCADE' +
         ');'
+        
 ]
 
 load_dotenv()

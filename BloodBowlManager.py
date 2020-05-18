@@ -1,20 +1,24 @@
 #!/usr/bin/python3
-import os, commands
+import os, commands, asyncio
 import sqlite3
-import goblinSpy
-import discord
+import goblinSpy, scheduleReader, crud, constants.dictionaries as dictionaries
+import discord, datetime, constants.texts as texts
 from dotenv import load_dotenv
-from discord.ext import commands as discord_commands
-
+from discord.ext import commands as discord_commands, tasks
+import threading 
 class Bot:
     def __init__(self):
         # 
         self.client = discord_commands.Bot(os.getenv('DISCORD_PREFIX'))
         self.token = os.getenv('DISCORD_TOKEN')
         self.client.remove_command('help')
+        self.index = 0
+        self.crud = crud.Crud()
         @self.client.event
         async def on_ready():
             print('Bot up!')
+            self.schedule_reader.start()
+
         # Start command definitions
         @self.client.command()
         #Help command
@@ -37,24 +41,43 @@ class Bot:
         async def round(ctx):
             await commands.Commands(ctx).round()
         @self.client.command()
-        async def Iam(ctx):
+        async def register(ctx):
             await commands.Commands(ctx).user_register()
         @self.client.command()
-        async def nextMatch(ctx):
+        async def next(ctx):
             await commands.Commands(ctx).my_next_match()
         @self.client.command()
-        async def IWillPlay(ctx):
+        async def date(ctx):
             await commands.Commands(ctx).establish_date_match()
         @self.client.command()
-        async def acceptMatch(ctx):
+        async def accept(ctx):
             await commands.Commands(ctx).accept_time()
-
-        
+        @self.client.command()
+        async def language(ctx):
+            await commands.Commands(ctx).change_language()
+    # Check near matches every 60 seconds.
+    @tasks.loop(seconds=60)
+    async def schedule_reader(self):
+        checked_time = datetime.datetime.now() + datetime.timedelta(minutes=30)
+        bd_matchesjserver = self.crud.recover_match_programmed_time_close(checked_time)
+        embed = discord.Embed(
+            colour = discord.Colour.red(),
+        )
+        if bd_matchesjserver:
+            for bd_match in bd_matchesjserver:
+                #Recovers the channel ID and send a embed on this channel.  
+                channel = self.client.get_channel(bd_match.discord_channel_id)
+                language = dictionaries.get_language(bd_match.language)
+                embed.title = language.NEAR_MATCH_TITLE % (bd_match.local_team, bd_match.visitor_team)
+                embed.description = language.NEAR_MATCH_DESCRIPTION % bd_match.proposed_time
+                await channel.send(embed=embed)
+                self.crud.delete_match_programmed_time(bd_match.match_contest_id)
+    
     def run(self):
         self.client.run(self.token)
-        print("como de async")
 
 if __name__ == "__main__":
     load_dotenv()
-    Bot().run()
+    bot = Bot().run()
+    print("como de async")
 
