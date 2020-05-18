@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import os, commands, asyncio
 import sqlite3
-import goblinSpy, scheduleReader, crud, constants.dictionaries as dictionaries
+import goblinSpy, crud, constants.dictionaries as dictionaries
 import discord, datetime, constants.texts as texts
 from dotenv import load_dotenv
 from discord.ext import commands as discord_commands, tasks
