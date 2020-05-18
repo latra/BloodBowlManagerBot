@@ -52,6 +52,7 @@ class Bot:
         
     def run(self):
         self.client.run(self.token)
+        print("como de async")
 
 if __name__ == "__main__":
     load_dotenv()
