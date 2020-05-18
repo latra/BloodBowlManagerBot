@@ -1,12 +1,25 @@
-import goblinSpy, re, discord, os, requests, emojis, datetime, sys
+import re, os, sys, requests, datetime
+import discord
 from discord.utils import get
-import texts
+import crud, goblinSpy, constants.emojis as emojis, constants.texts as texts
+
 class Commands:
     def __init__(self, ctx):
         self.ctx = ctx
-        self.language = texts.EN
-        self.goblin = goblinSpy.GoblinSpy(self.ctx.message.guild.id, language=self.language)
-
+        self.crud = crud.Crud()
+        self.discord_id = ctx.author.id
+        self.language = texts.EN()
+        self.league_name = None
+        self.tournament_name = None
+        self.goblin_token = None
+        saved_data = self.crud.recover_config(self.discord_id)
+        if saved_data:
+            self.league_name = saved_data.league_name
+            self.tournament_name = saved_data.tournament_name
+            self.goblin_token = saved_data.goblin_token
+        self.goblin = goblinSpy.GoblinSpy(self.goblin_token, self.crud)
+    #region COMMANDS
+    #region COMMAND - HELP
     async def help(self):
         command = self.ctx.message.content.split()
         # Select witch help has to show
@@ -57,34 +70,35 @@ class Commands:
             embed.add_field(name= field[0], value=field[1], inline=False)
 
         await self.ctx.send(embed = embed)
-        
+    #endregion
+    
     async def configure(self):
         #Configure the server with the passed parammeters
-        if (self.ctx.message.author.server_permissions.administrator):
+        if (self.ctx.message.author.guild_permissions.administrator):
             regex_exp = "\"(.*)\" \"(.*)\""
             command = re.split(regex_exp, self.ctx.message.content)
             
-            if self.goblin.goblin_token:
+            if self.goblin_token:
                 # If the server is already configured, return an error
                 await self.ctx.send(content=self.language.ERROR_ALREADY_CONFIGURED)
             else:
                 if len(command) >= 3:
                     # Add the server to DB and reutn OK
-                    self.goblin.create_goblin(command[1], command[2])
-                    await self.ctx.send(content=self.language.SUCCESS_SERVER_CONFIGURED)
+                    goblin_token = self.goblin.get_goblin_token(command[1], command[2])
+                    if self.crud.create_config(self.discord_id, command[1], command[2], goblin_token): await self.ctx.send(content=self.language.SUCCESS_SERVER_CONFIGURED)
+                    else: await self.ctx.send(content=self.language.ERROR_DEFAULT)
                 else:
-                    # If there are not valid params, return an error
-
+                    # Syntax error message
                     await self.ctx.send(content=self.language.ERROR_SYNTAX_CONFIGURATION)
         else:
             await self.ctx.send(content=self.language.ERROR_NOT_ALLOWED)
     async def reset(self):
         # Delete the server configuration
         #Only can be do it by an administrator
-        if (self.ctx.message.author.server_permissions.administrator):
-            if (self.goblin.league_name):
-                self.goblin.delete_goblin()
-                await self.ctx.send(content=self.language.SUCCESS_SERVER_RESET)
+        if (self.ctx.message.author.guild_permissions.administrator):
+            if (self.goblin_token):
+                if self.crud.delete_config(self.discord_id): await self.ctx.send(content=self.language.SUCCESS_SERVER_RESET)
+                else: await self.ctx.send(content=self.language.ERROR_DEFAULT)
             else:
                 await self.ctx.send(content=self.language.ERROR_NOT_CONFIGURED)
         else:
@@ -92,12 +106,12 @@ class Commands:
 
     async def teams(self):
         #Shows the competition team list
-        if not self.goblin.goblin_token:
+        if not self.goblin_token:
             await self.ctx.send(content=self.language.ERROR_NOT_CONFIGURED)
         else:
             #Get data from GoblinSpy
-            league = self.goblin.get_goblin_base_data()
-            tournament = league.tournaments[self.goblin.tournament_name]
+            league = self.goblin.get_goblin_generic_data(self.discord_id)
+            tournament = league.tournaments[self.tournament_name]
             if tournament:
                 teams = ""
                 coach = ""
@@ -113,7 +127,7 @@ class Commands:
                 embed = discord.Embed(
                    colour = discord.Colour.red(),
                    description = self.language.LAST_UPDATE % tournament.last_update,    
-                   title = "Teams on %s" % self.goblin.tournament_name,
+                   title = "Teams on %s" % self.tournament_name,
                 )
                 embed.add_field(name = ":trophy:", value=ranking, inline=True)
                 embed.add_field(name = self.language.TEAM_NAME, value=teams, inline=True)
@@ -128,8 +142,8 @@ class Commands:
             await self.ctx.send(content=self.language.ERROR_NOT_CONFIGURED)
         else:
             #Get data from GoblinSpy
-            league = self.goblin.get_goblin_base_data()
-            tournament = league.tournaments[self.goblin.tournament_name]
+            league = self.goblin.get_goblin_generic_data(self.discord_id)
+            tournament = league.tournaments[self.tournament_name]
             if tournament:
                 if tournament.type_of_competition != "ladder":
 
@@ -161,25 +175,39 @@ class Commands:
             else:
                 await self.ctx.send(content=self.language.ERROR_DATA_NOT_FOUND)
 
-    async def this_is_my_team(self):
-        if not self.goblin.goblin_token:
+    async def user_register(self):
+        if not self.goblin_token:
             await self.ctx.send(content=self.language.ERROR_NOT_CONFIGURED)
         else:
             command = self.ctx.message.content.split()
-            if (len(command) > 1):
-                result = self.goblin.set_coach(command[1] , str(self.ctx.message.author), self.ctx.message.author.id)
-                await self.ctx.send(content=result)
+            if len(command) > 1 and self.coach_exists(' '.join(command[1:])):
+                # Tries create the user. Returns a dictionary status, action
+                result = self.crud.create_or_update_coach(self.discord_id, ' '.join(command[1:]), str(self.ctx.message.author), self.ctx.message.author.id)
+                if result['status']:
+                    if result['action'] == "CREATED":
+                        await self.ctx.send(content=self.language.SUCCESS_IAM_REGISTER)
+                    elif result['action'] == "UPDATED":
+                        await self.ctx.send(content=self.language.SUCCESS_IAM_UPDATE)
+                else:
+                    await self.ctx.send(content=self.language.ERROR_ALREADY_REGISTERED)
             else:
                 await self.ctx.send(content=self.language.ERROR_SYNTAX_IAM)
+
+    def coach_exists(self, coach_name):
+        league = self.goblin.get_goblin_generic_data(self.discord_id)
+        for team in league.tournaments[self.tournament_name].ranking.ranking:
+            if league.tournaments[self.tournament_name].ranking.ranking[team].coach.coach_name ==coach_name:
+                return True
+        else: return False
 
     async def my_next_match(self):
         if not self.goblin.goblin_token:
             await self.ctx.send(content=self.language.ERROR_NOT_CONFIGURED)
         else:
-            coach_name = self.goblin.get_coach_by_discord(self.ctx.message.author.id)
+            coach_name = self.crud.recover_coach(self.discord_id, discord_user_id=self.ctx.message.author.id)
             if coach_name:
-                league = self.goblin.get_goblin_base_data()
-                tournament = league.tournaments[self.goblin.tournament_name]
+                league = self.goblin.get_goblin_generic_data(self.discord_id)
+                tournament = league.tournaments[self.tournament_name]
                 if tournament.schedule:
                     embed = discord.Embed(
                         colour = discord.Colour.red(),
@@ -198,10 +226,10 @@ class Commands:
                         if not next_match.programmed_time:
                             embed.description= self.language.NEXTMATCH_TIME_NON_DEFINED
                         else:
-                            programmed_info = self.goblin.get_programmed_user_info(next_match.contest_id)
-                            if programmed_info[3]:
+                            programmed_info = self.crud.recover_match_programmed_time(self.discord_id, match_contest_id=next_match.contest_id)
+                            if programmed_info.accepted:
                                 embed.description=self.language.NEXTMATCH_TIME_DEFINED % next_match.programmed_time
-                            elif programmed_info[2] == self.ctx.message.author.id:
+                            elif programmed_info.invited_discord_user_id == self.ctx.message.author.id:
                                 embed.description= self.language.NEXTMATCH_TIME_DEFINED_USER_NO_ACCEPTED % next_match.programmed_time
                             else:
                                 embed.description= self.language.NEXTMATCH_TIME_DEFINED_RIVAL_NO_ACCEPTED % next_match.programmed_time
@@ -218,23 +246,22 @@ class Commands:
             try:
                 command = ' '.join(self.ctx.message.content.split()[1:])
                 setted_time = datetime.datetime.strptime(command, "%d/%m/%Y %H:%M")
-                coach_name = self.goblin.get_coach_by_discord(self.ctx.message.author.id)
-                if coach_name:
-                    league = self.goblin.get_goblin_base_data()
-                    tournament = league.tournaments[self.goblin.tournament_name]
+                bd_coach = self.crud.recover_coach(self.discord_id, discord_user_id= self.ctx.message.author.id)
+                if bd_coach:
+                    league = self.goblin.get_goblin_generic_data(self.discord_id)
+                    tournament = league.tournaments[self.tournament_name]
                     if tournament.schedule:
                         next_match = self.goblin.get_player_next_match(tournament.schedule.schedule[tournament.schedule.current_round], self.ctx.message.author.id)
+                        rival_id = next_match.local_team.coach.user_discord_id if self.ctx.message.author.id != next_match.local_team.coach.user_discord_id else next_match.visitor_team.coach.user_discord_id
                         if next_match and next_match.status == 'scheduled':
-                            response = self.goblin.set_matchtime(next_match, command, str(self.ctx.message.author.id))
-                            await self.ctx.send(content=self.language.ERROR_ESTABLISHDATE_INVITED if response[0] == "ERROR" else self.language.SUCCESS_ESTABLISHDATE_UPDATE if response[0] == "UPDATE" else self.language.SUCCESS_ESTABLISHDATE_REGISTER)
+                            db_programmed_time = self.crud.create_or_update_match_programmed_time(self.discord_id, next_match.contest_id, command, self.ctx.message.author.id, rival_id)
+                            await self.ctx.send(content=self.language.ERROR_ESTABLISHDATE_INVITED if not db_programmed_time['status'] else self.language.SUCCESS_ESTABLISHDATE_UPDATE if db_programmed_time['action'] == "UPDATED" else self.language.SUCCESS_ESTABLISHDATE_REGISTER)
                             # If it's created or updated, we will send a MD message notifying to the other user
-                            if response[0] == "CREATED" and response[1]:
-                                invited_user = self.ctx.message.guild.get_member(int(response[1]))
+                            invited_user = self.ctx.message.guild.get_member(rival_id)
+                            if invited_user and db_programmed_time['action'] == 'CREATED':
                                 await invited_user.send(self.language.INFO_MATCHCREATED % command)
-                            elif response[0] == "UPDATED" and response[1]:
-                                invited_user = self.ctx.message.guild.get_member(int(response[1]))
+                            elif invited_user and db_programmed_time['action'] == 'UPDATED':
                                 await invited_user.send(self.language.INFO_MATCHUPDATED % command)
-
                         else:
                             await self.ctx.send(content=self.language.ERROR_ESTABLISHDATE_MATCHERROR)
                     else:
@@ -248,15 +275,13 @@ class Commands:
         if not self.goblin.goblin_token:
             await self.ctx.send(content=self.language.ERROR_NOT_CONFIGURED)
         else:
-            programmed_match_data = self.goblin.get_pendent_invitations(self.ctx.author.id)
-            if programmed_match_data and not programmed_match_data[2]:
-                self.goblin.accept_match(programmed_match_data[3])
+            db_programmed_time = self.crud.recover_match_programmed_time(self.discord_id, invited_discord_user_id = self.ctx.author.id)
+            if db_programmed_time and not db_programmed_time.accepted:
+                self.crud.accept_match_programmed_time(self.discord_id, db_programmed_time.match_contest_id)
                 await self.ctx.send(content=self.language.SUCCESS_MATCH_ACCEPTED)
-                leader_user = self.ctx.message.guild.get_member(int(programmed_match_data[1]))
-                await leader_user.send(self.language.INFO_USERACCEPT % programmed_match_data[0])
-            elif not programmed_match_data:
-                #error
-                await self.ctx.send("Error")
-            elif programmed_match_data[1]:
+                leader_user = self.ctx.message.guild.get_member(db_programmed_time.leader_discord_user_id)
+                await leader_user.send(self.language.INFO_USERACCEPT % db_programmed_time.proposed_time)
+            else:
                 #already accepted
-                await self.ctx.send("Ya habias aceptado")
+                await self.ctx.send(self.language.ERROR_ACCEPT_NOMATCH)
+    #endregion

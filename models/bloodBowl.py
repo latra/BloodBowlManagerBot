@@ -28,7 +28,6 @@ class Team:
 class League:
     def __init__(self, league_name = ""):
         self.id = 0
-
         self.league_name = league_name
         self.tournaments = {}
     def add_tournament(self, tournament):

@@ -12,6 +12,8 @@ class EN:
 
     NEXTMATCH_TIME_NON_DEFINED = "You have not defined the match day. Use ```bb2!iwillplay DD/MM/YYY HH:mm``` to stablish it."
     NEXTMATCH_GAME_PLAYED = "You already played this round!"
+    ERROR_ACCEPT_NOMATCH = "There is not match to accept"
+    ERROR_DEFAULT = "An unknown error has occurred. Please, try it later."
     ERROR_ESTABLISHDATE_INVITED = "You has been invited to play this match. Use ```bb2!nextMatch``` to check it and ```bb2!acceptMatch``` to accept the proposed time."
     ERROR_ESTABLISHDATE_MATCHERROR = "Error: Next match not found."
     ERROR_SYNTAX_ESTABLISHDATE = "Error: Invalid syntax. Please, use ```bb2!iwillplay DD/MM/YYYY HH:mm``` to set or update the match day"
@@ -25,6 +27,7 @@ class EN:
     ERROR_NOT_REGISTERED = "Error: You are not identified. Use  ```bb2!iam {your coach name}``` to link your discord account to your coach name and try again."
     ERROR_ALREADY_REGISTERED = "Error: This coach is already registered. If it's your coach name, talk with an administrator."
     ERROR_INCORRECT_ROUND="Error: Round '%s' does not exist."
+    
     BOT_THUMBAIL = "https://i.imgur.com/8eptQlM.png"
 
     HELP_GENERIC_TITLE = "Blood Bowl Manager"

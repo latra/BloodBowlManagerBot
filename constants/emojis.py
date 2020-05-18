@@ -1,4 +1,3 @@
-import sqlite3, os
 def get_race_emoji(race_id):
 
     #This dict should be in static file
