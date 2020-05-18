@@ -1,4 +1,4 @@
-import goblinSpy, re, discord, os, requests, bloodBowl, datetime, sys
+import goblinSpy, re, discord, os, requests, emojis, datetime, sys
 from discord.utils import get
 import texts
 class Commands:
@@ -107,7 +107,7 @@ class Commands:
                     if not race_logo: race_logo = ":grey_question:"
                     teams += "%s %s\n\n" %(race_logo, tournament.ranking.ranking[team_position].team_name)
                     coach += "%s\n\n" % (tournament.ranking.ranking[team_position].coach.display_name)
-                    ranking += "%s\n\n" % (bloodBowl.Get_Ranking(team_position))
+                    ranking += "%s\n\n" % (emojis.get_ranking_emoji(team_position))
                 
 
                 embed = discord.Embed(

@@ -1,4 +1,4 @@
-import sqlite3, math, js2py, os, requests, models, bloodBowl, texts, datetime
+import sqlite3, math, js2py, os, requests, models, emojis, texts, datetime
 class GoblinSpy:
     def __init__(self, discord_id, league = None, tournament_name = None, goblin_token = None, language = None):
         self.league_name = league
@@ -85,7 +85,7 @@ class GoblinSpy:
                 coach.display_name = recover_coach[0]
                 coach.user_discord_id = recover_coach[1]
             # Se guarda la raza como el emoticono de la raza (bb<race_name>)
-            team = models.Team(coach = coach, team_name=team_data[17], race=bloodBowl.Get_Race(int(team_data[16])), wins=team_data[22], draws=team_data[23], loses=team_data[24], rank=team_data[18], td=team_data[25])
+            team = models.Team(coach = coach, team_name=team_data[17], race=emojis.get_race_emoji(int(team_data[16])), wins=team_data[22], draws=team_data[23], loses=team_data[24], rank=team_data[18], td=team_data[25])
             ranking.add_team(team)
             all_teams[team.team_name] = team
         # Primero se recuperan los datos del histórico. Después, si la competición no es de tipo escalera y tiene partidos programados, se recuperan estos, incluidos los ya jugados
