@@ -27,12 +27,11 @@ QUERYS = [
         '	"discordServerId"	INTEGER NOT NULL,' +
         '	"accepted"	INTEGER DEFAULT 0,' +
         '	"proposedTime"	TEXT,' +
-        '   "localTeamName"	TEXT,' +'
+        '   "localTeamName"	TEXT,' +
 	    '   "visitorTeamName"	TEXT,' +
         '	PRIMARY KEY("matchContestId"),' +
         '	FOREIGN KEY("discordServerId") REFERENCES "SERVERS"("discordServerId") ON DELETE CASCADE' +
         ');'
-        
 ]
 
 load_dotenv()
