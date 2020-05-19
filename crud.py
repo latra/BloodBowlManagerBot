@@ -170,12 +170,15 @@ class Crud:
         except:
             return False
     def change_language(self, discord_server_id, language):
-        query = "UPDATE SERVERS SET language = '%s' WHERE discordServerId='%s'" % (language, discord_server_id)
+        query = "UPDATE SERVERS SET language = '%s' WHERE discordServerId=%i" % (language, discord_server_id)
+        self.log.write("Creando query %s" % query)
         try:
             cursor = self.database.cursor()
             cursor.execute(query)
             self.database.commit()
             cursor.close()
+            self.log.write("Cambio de idioma OK")
             return True
         except:
+            self.log.write("Cambio de idioma KO")
             return False

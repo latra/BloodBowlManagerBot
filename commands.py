@@ -8,16 +8,13 @@ class Commands:
         self.logs = logs.Log()
         self.ctx = ctx
         self.crud = crud.Crud()
-        self.discord_id = ctx.author.id
+        self.discord_id = ctx.author.guild.id
         self.language = texts.EN()
         self.league_name = None
         self.tournament_name = None
         self.goblin_token = None
-        self.logs.write("RECUPERANDO CONFIGURACION")
         saved_data = self.crud.recover_config(self.discord_id)
-        self.logs.write("CONFIGURACION RECUPERADA")
         if saved_data:
-            self.logs.write("SE HA RECUPERADO INFORMACION")
             self.league_name = saved_data.league_name
             self.tournament_name = saved_data.tournament_name
             self.goblin_token = saved_data.goblin_token
@@ -321,7 +318,7 @@ class Commands:
             else:
                 command = self.ctx.message.content.split()
                 if len(command) > 1 and dictionaries.get_language(command[1]):
-                    if self.crud.change_language(self.ctx.message.author.guild.id, command[1]):
+                    if self.crud.change_language(self.discord_id, command[1]):
                         self.language = dictionaries.get_language(command[1])
                         await self.ctx.send(self.language.LANGUAGE_UPDATED)
                     else:
