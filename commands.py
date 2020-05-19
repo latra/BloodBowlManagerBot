@@ -2,9 +2,10 @@ import re, os, sys, requests, datetime
 import discord
 from discord.utils import get
 import crud, goblinSpy, constants.dictionaries as dictionaries, constants.texts as texts
-
+import logs
 class Commands:
     def __init__(self, ctx):
+        self.logs = logs.Log()
         self.ctx = ctx
         self.crud = crud.Crud()
         self.discord_id = ctx.author.id
@@ -12,8 +13,11 @@ class Commands:
         self.league_name = None
         self.tournament_name = None
         self.goblin_token = None
+        self.logs.write("RECUPERANDO CONFIGURACION")
         saved_data = self.crud.recover_config(self.discord_id)
+        self.logs.write("CONFIGURACION RECUPERADA")
         if saved_data:
+            self.logs.write("SE HA RECUPERADO INFORMACION")
             self.league_name = saved_data.league_name
             self.tournament_name = saved_data.tournament_name
             self.goblin_token = saved_data.goblin_token
@@ -74,15 +78,21 @@ class Commands:
     #endregion
     
     async def configure(self):
+        self.logs.write("SE INICIA PROCESO DE CONFIGURE")
         #Configure the server with the passed parammeters
         if (self.ctx.message.author.guild_permissions.administrator):
             regex_exp = "\"(.*)\" \"(.*)\""
             command = re.split(regex_exp, self.ctx.message.content)
+            self.logs.write("PERMISOS VÁLIDOS")
             
             if self.goblin_token:
+                self.logs.write("YA LOGED")
+
                 # If the server is already configured, return an error
                 await self.ctx.send(content=self.language.ERROR_ALREADY_CONFIGURED)
             else:
+                self.logs.write("OK")
+
                 if len(command) >= 3:
                     # Add the server to DB and reutn OK
                     goblin_token = self.goblin.get_goblin_token(command[1], command[2])
