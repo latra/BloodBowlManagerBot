@@ -146,3 +146,79 @@ class ES:
     NEAR_MATCH_TITLE= "¡*%s VS %s* está a punto de comenzar!"
     NEAR_MATCH_DESCRIPTION = "Está previsto que el partido empiece a las %s, ¡Id buscando los pompones y a animar!"
     LANGUAGE_UPDATED = "Ok! Pues a hablar la lengua del imperio, 0 dramas."
+
+class EU:
+    SUCCESS_SERVER_CONFIGURED = "Zerbitzaria era egokian konfiguratu da!"
+    SUCCESS_SERVER_RESET = "Zerbitzariaren konfigurazioa berrabiarazi da!"
+    SUCCESS_IAM_REGISTER = "Era egokian erregistratu zara!"
+    SUCCESS_IAM_UPDATE =  "Zure entrenatzaile izena eguneratu da!"
+    SUCCESS_ESTABLISHDATE_UPDATE= "Pariduaren data eguneratu da!"
+    SUCCESS_ESTABLISHDATE_REGISTER="¡Partiduaren data berretsi da!"
+    SUCCESS_MATCH_ACCEPTED = "Partidua onartu da!"
+    NEXTMATCH_TIME_DEFINED = "Partiduaren eguna eta ordua %s berretsi da."
+    NEXTMATCH_TIME_DEFINED_USER_NO_ACCEPTED = "Zure aurkaria %s-ean jokatzea proposatu dizu, baina oraindik ez duzu data onartu. Erabili ```bb2!accept``` ordua onartzeko."
+    NEXTMATCH_TIME_DEFINED_RIVAL_NO_ACCEPTED = "%s egunean jokatzea proposatu duzu, baina zure aurkaria ez du topaketa onartu."
+
+    NEXTMATCH_TIME_NON_DEFINED = "Oraindik ez duzu topaketaren data zehaztu. Erabili ```bb2!register DD/MM/YYY HH:mm``` hori egiteko."
+    NEXTMATCH_GAME_PLAYED = "Txanda hau jadanik jokatu duzu!"
+    ERROR_ACCEPT_NOMATCH = "Ez daukazu partidurik onartzeke."
+    ERROR_DEFAULT = "Errore bat gertatu da. Saiatu berriz beranduago."
+    ERROR_ESTABLISHDATE_INVITED = "Zure aurkaria partiduaren ordua proposatu du. Erabili ```bb2!next``` proposatutako ordua berrikusteko eta ```bb2!accept``` berresteko."
+    ERROR_ESTABLISHDATE_MATCHERROR = "Errorea: Ez da hurrengo partidua aurkitu."
+    ERROR_SYNTAX_ESTABLISHDATE = "Errorea: Komando baliogabea. Mesedez, erabili ```bb2!register DD/MM/YYYY HH:mm``` partiduaren data zehaztu edo eguneratzeko"
+    ERROR_NOT_CONFIGURED="Errorea: Ez dafo lehiaketarik konfiguratuta"
+    ERROR_ALREADY_CONFIGURED = "Errorea: Zerbitzaria jadanik konfiguratuta dago. Berrabiarazi konfigurazioa liga berriro hautatzeko."
+    ERROR_NOT_ALLOWED = "Errorea: Soilik administraitzaileek egin dezakete ekintza hau"
+    ERROR_DATA_NOT_FOUND = "Errorea: Ezin izan dira datuak aurkitu. Gogoratu konfigurazioaren pausak jarraitzea, eta horrela egin badezu, izan kontutan GoblinSpy ordu batzuk eman ditzakela zure datuak lehenengo alfiz eskuratzen."
+    ERROR_NOT_SCHEDULE = "Errorea: Ez da lehiaketa honerako egutegirik aurkitu."
+    ERROR_SYNTAX_CONFIGURATION = "Errorea: Sintaxis inválida. Por favor, utiliza ```bb2!configure \"league name\" \"tournament name\"```, incluyendo las comillas, para configurar el servidor."
+    ERROR_SYNTAX_IAM = "Errorea: Sintaxi desegokia. Mesedez, erabili ```bb2!register {entrenatzaile izena}``` zure bloodbowl kontua discordekin estekatzeko"
+    ERROR_NOT_REGISTERED = "Errorea: Oraindik ez zara identifikatu. Mesedez, erabili ```bb2!register {entrenatzaile izena}``` zure bloodbowl kontua discordekin estekatzeko"
+    ERROR_ALREADY_REGISTERED = "Errorea: Norbaitek entranitzaile hau bezala izena eman du. Zure entrenatzaile izen bada jarri kontaktuan administratzaile batekin."
+    ERROR_INCORRECT_ROUND="Errorea: Txanda '%s' ez da existitzen."
+    ERROR_LANGUAGE_INVALID = "Errorea: Autatutako hizkuntza ez da egokia edo ez dago erabilgarri. Erabili ```bb2!help``` informazio gehiagorako."
+    ERROR_INVALID_COMMAND="Errorea. Sartutako komandoa ez da egokia. Erabili ```bb2!help``` informazio gehiagorako"
+
+    BOT_THUMBAIL = "https://i.imgur.com/8eptQlM.png"
+
+    HELP_GENERIC_TITLE = "Blood Bowl Kudeatzailea"
+    HELP_GENERIC_DESCRIPTION = "Kapitulu bat ikusteko, kapituluaren zenbakia gehitzearekin nahikoa da bb2!help ostean.\nAdibidez: ```bb2!help 2```"
+    HELP_GENERIC_FIELDS = [
+        ("Kapitulu 1: Konfiguratu zure lehiaketa", "Berrikusi nola konfiguratu eta zure lehenengo pausuak eman Blood Bowl Manager Bot-ekin")
+        ,("Kapitulu 2: Blood Bowl Komandoak", "Berrikusi ligaren erabiltzaileentzako aukeran dauden komandoak.")
+    ]
+
+    HELP_SETUP_TITLE = "Konfigurazioa - Blood Bowl Kudeatzailea"
+    HELP_SETUP_DESCRIPTION = "Jarraitu hurrengo pausuak zure liga Blood Bowl Kudeatsaile Bot-ean konfiguratzeko" 
+    HELP_SETUP_FIELDS = [
+        ("#1 Baimendu GoblinSpy zure lehiaketaren datuak eskuratzeko.", "Sartu http://www.mordrek.com/goblinSpy/web/activate.html? eta sartu zure lehiaketaren datuak. Ondoren egin klik \"Activate\" botoian.")
+        ,("#2 Konfiguratu lehiaketa bot-ean", "Erabili ```bb2!config \"Ligaren izena\" \"Lehiaketaren izena\"```, komilak barne, zure lehiaketa konfiguratzeko.")
+        ,("#3 Instalatu emojiak", "Descargatu eta instalatu emoji pakete hau erabiltzaile esperientzia hobea izateko")
+    ]
+
+    HELP_COMMAND_TITLE = "Komandoak - Blood Bowl Kudeatsailea"
+    HELP_COMMAND_DESCRIPTION = "Erbaili hurrengo komandoak zure partiduak ikusi eta kudeatseko. Baliteke partiduak denbora bat ematea eguneraketan."
+    HELP_COMMAND_FIELDS = [
+        ("```bb2!teams```", "Lehiaketaren talde guztiak ikusteko"),
+        ("```bb2!round <txandaren zenbakia>```", "Hautatutako txandarenb partiduak erakusten ditu. Ez bada txandaren zenbakirik zehasten, jokatzen ari den txandaren datuak erkutsiko ditu."),
+        ("```bb2!register <entrenatzaile izena>```", "Estekatu diskord erabiltzaile izena eta entrenatzaile izena, horrela ezaugarri gehigarriak ahalbidetuz."),
+        ("```bb2!next```", "Erakutsi zure taldearen hurrengo partidua"),
+        ("```bb2!date <DD-MM-YYYY hh:mm>```", "Hurrengo partiduaren data eta ordua zehaztu. Zure aurkaria izena eman badu, abisu bat helduko zaio"),
+        ("```bb2!accept```", "Berretsi zure aurkariak proposatutako ordua eta aurkaria abisatu.")
+    ]
+
+    INFO_MATCHCREATED = "Zure hurrengo partidua %s ligan %s lehiaketan, %s-ren aurka da.\nzure aurkaria %s-an jolastea proposatzen du. Bueltatu ligaren zerbitzarira eta erabili ```bb2!accept``` ordua berresteko edo ```bb2!decline``` ezetza adierazteko."
+    INFO_MATCHUPDATED = "Zure aurkaria lehiaketa %s ligan %s partiduarentzako proposatutako data aldatu du eta orain %s jokatzea proposatzen du. Bueltatu ligaren zerbitzarira eta erabili  ```bb2!accept``` komandoa ordua berresteko edo ```bb2!decline``` ezetza adierazteko."
+    INFO_USERACCEPT = "Zure aurkaria onartu du!. Partidua %s jokatuko da."
+    ROUND= "Txanda %s"
+    TEAM_NAME = "Taldearen izena"
+    COACH = "Entrenatzailea"
+    LAST_UPDATE = "Azkenego eguneraketa %s-n izan da"
+    LOCAL_TEAM = "Etxeko taldea"
+    VS = "VS"
+    VISITOR_TEAM = "Kanpoko taldea"
+    NEXT_MATCH = "Hurrengo partidua"
+    NEAR_MATCH_TITLE= "*%s VS %s* Momentu batzuk barru hasiko da!"
+    NEAR_MATCH_DESCRIPTION = "Partidua %s-tan hasiko da, bilatu ponpoiak eta animatzera!"
+    LANGUAGE_UPDATED = "Ondo! Jainkoa eta lege zarra, aurrera bolie!."
+    DM_SENDED = "Mezu pribatu bat bidali dizut informazioarekin :)"
