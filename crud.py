@@ -1,45 +1,61 @@
-import sqlite3, os
+import sqlite3, os, logs, sys
 import models.dataBase as models
 class Crud:
     def __init__(self):
         self.database = sqlite3.connect(os.getenv('SQLITE_CONNECTION'))
+        self.log = logs.Log()
         self.database.execute("PRAGMA foreign_keys = 1")
 
 
     def recover_config(self, discord_server_id):
         #Recovers a server configuration using the discord server id
         query = "SELECT * FROM SERVERS WHERE discordServerId = %i;" % discord_server_id
+        self.log("Consulta creada: %s" % query)
         cursor = self.database.cursor()
         cursor.execute(query)
+        self.log("Consulta ejecutada")
+
         result = cursor.fetchone()
         cursor.close()
 
         if result:
+            self.log("Resultado: %s" % str(result))
+
             return models.DBServer(result[0], result[1], result[2], result[3], result[4], result[5])
         else:
+            self.log("No se han encontrado datos")
             return None
 
     def create_config(self, discord_server_id, league_name, tournament_name, token, channel_id):
         #Creates a new entry on tournaments table. Used when the bot is configured on a new server
         try:
             query = "INSERT INTO SERVERS (discordServerId, leagueName, tournamentName, goblinToken, discordChannelId) VALUES (%i, '%s', '%s', '%s', %i);" % (discord_server_id, league_name, tournament_name, token, channel_id)
+            self.log("Consulta creada: %s" % query)
             cursor = self.database.cursor()
             cursor.execute(query)
             self.database.commit()
+            self.log("Consulta ejecutada")
             cursor.close()
+
             return True
         except:
+            self.log("Error al realizar la accion. ERROR: %s\n" %sys.exc_info()[0] )
             return False
     def delete_config(self, discord_server_id):
         #Deletes a server config and all the items related to it
         try:
             query = "DELETE FROM SERVERS WHERE discordServerId = %i;" % discord_server_id
+            self.log("Consulta creada: %s" % query)
             cursor = self.database.cursor()
+
             cursor.execute(query)
             self.database.commit()
+            self.log("Consulta ejecutada")
+
             cursor.close()
             return True
         except:
+            self.log("Error al realizar la accion. ERROR: %s\n" %sys.exc_info()[0] )
             return False
     def recover_coach(self, discord_server_id, bb_coach_name = None, discord_user_id = None):
         #Recovers a coach or returns None if not found
