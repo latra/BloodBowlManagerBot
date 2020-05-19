@@ -62,7 +62,10 @@ class Bot:
     # Check near matches every 60 seconds.
         @self.client.event
         async def on_command_error(ctx, error):
-            await commands.Commands(ctx).default()
+            if isinstance(error, discord_commands.CommandError): 
+                await commands.Commands(ctx).default()
+            else:
+                pass
     @tasks.loop(seconds=60)
     async def schedule_reader(self):
         checked_time = datetime.datetime.now() + datetime.timedelta(minutes=30)

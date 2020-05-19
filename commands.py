@@ -51,6 +51,8 @@ class Commands:
 
         await self.ctx.send(self.language.DM_SENDED, delete_after=20)
         await self.ctx.author.send(embed = embed)
+            # If the bot doesn't have permission it will fails raising an error
+        await self.ctx.message.delete(delay=20)
     async def help_setup(self):
         # Shows how to setup the bot on a new server
         embed = discord.Embed(
@@ -64,6 +66,8 @@ class Commands:
 
         await self.ctx.send(self.language.DM_SENDED, delete_after=20)
         await self.ctx.author.send(embed = embed)
+            # If the bot doesn't have permission it will fails raising an error
+        await self.ctx.message.delete(delay=20)
     async def help_commands(self):
         # Shows the available commands
         embed = discord.Embed(
@@ -74,9 +78,10 @@ class Commands:
         embed.set_thumbnail(url=self.language.BOT_THUMBAIL)
         for field in self.language.HELP_COMMAND_FIELDS:
             embed.add_field(name= field[0], value=field[1], inline=False)
-
         await self.ctx.send(self.language.DM_SENDED, delete_after=20)
         await self.ctx.author.send(embed = embed)
+            # If the bot doesn't have permission it will fails raising an error
+        await self.ctx.message.delete(delay=20)
     #endregion
     
     async def configure(self):

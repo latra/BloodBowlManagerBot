@@ -10,13 +10,13 @@ class EN:
     NEXTMATCH_TIME_DEFINED_USER_NO_ACCEPTED = "Your rival proposed play the match on %s, but you didn't accepted it yet. Use ```bb2!accept``` to do it."
     NEXTMATCH_TIME_DEFINED_RIVAL_NO_ACCEPTED = "You proposed play the match on %s, but your rival didn't accepted yet."
 
-    NEXTMATCH_TIME_NON_DEFINED = "You have not defined the match day. Use ```bb2!register DD/MM/YYY HH:mm``` to stablish it."
+    NEXTMATCH_TIME_NON_DEFINED = "You have not defined the match day. Use ```bb2!date DD/MM/YYY HH:mm``` to stablish it."
     NEXTMATCH_GAME_PLAYED = "You already played this round!"
     ERROR_ACCEPT_NOMATCH = "There is not match to accept"
     ERROR_DEFAULT = "An unknown error has occurred. Please, try it later."
     ERROR_ESTABLISHDATE_INVITED = "You has been invited to play this match. Use ```bb2!next``` to check it and ```bb2!accept``` to accept the proposed time."
     ERROR_ESTABLISHDATE_MATCHERROR = "Error: Next match not found."
-    ERROR_SYNTAX_ESTABLISHDATE = "Error: Invalid syntax. Please, use ```bb2!register DD/MM/YYYY HH:mm``` to set or update the match day"
+    ERROR_SYNTAX_ESTABLISHDATE = "Error: Invalid syntax. Please, use ```bb2!date DD/MM/YYYY HH:mm``` to set or update the match day"
     ERROR_NOT_CONFIGURED="Error: There is no tournament configured"
     ERROR_ALREADY_CONFIGURED = "Error: The server is already configured"
     ERROR_NOT_ALLOWED = "Error: Only server admins can do this action"
@@ -84,13 +84,13 @@ class ES:
     NEXTMATCH_TIME_DEFINED_USER_NO_ACCEPTED = "Tú oponente te ha propuesto jugar el %s, pero aún no has aceptado. Utiliza ```bb2!accept``` para aceptar la hora."
     NEXTMATCH_TIME_DEFINED_RIVAL_NO_ACCEPTED = "Has propuesto jugar el %s, pero tu rival aún no ha aceptado el encuentro."
 
-    NEXTMATCH_TIME_NON_DEFINED = "Aún no habéis definido la fecha del encuentro. Usa ```bb2!register DD/MM/YYY HH:mm``` para hacerlo."
+    NEXTMATCH_TIME_NON_DEFINED = "Aún no habéis definido la fecha del encuentro. Usa ```bb2!date DD/MM/YYY HH:mm``` para hacerlo."
     NEXTMATCH_GAME_PLAYED = "¡Ya has jugado esta ronda!"
     ERROR_ACCEPT_NOMATCH = "No tienes ningún partido pendiente de ser aceptado."
     ERROR_DEFAULT = "Ha ocurrido un error. Vuelve a intentarlo más tarde."
     ERROR_ESTABLISHDATE_INVITED = "Tu rival ya ha propuesto la hora del partido. Utiliza ```bb2!next``` para revisar la hora propuest y ```bb2!accept``` para aceptar."
     ERROR_ESTABLISHDATE_MATCHERROR = "Error: No se ha encontrado el próximo partido."
-    ERROR_SYNTAX_ESTABLISHDATE = "Error: Comando inválido. Por favor, utilice ```bb2!register DD/MM/YYYY HH:mm``` para establecer o actualizar la hora del partido"
+    ERROR_SYNTAX_ESTABLISHDATE = "Error: Comando inválido. Por favor, utilice ```bb2!date DD/MM/YYYY HH:mm``` para establecer o actualizar la hora del partido"
     ERROR_NOT_CONFIGURED="Error: No hay ningún torneo configurado"
     ERROR_ALREADY_CONFIGURED = "Error: El servidor ya está configurado. Reinicie la configuración antes si desea volver a seleccionar la liga"
     ERROR_NOT_ALLOWED = "Error: Solo los administradores pueden realizar esta acción"
@@ -160,13 +160,13 @@ class EU:
     NEXTMATCH_TIME_DEFINED_USER_NO_ACCEPTED = "Zure aurkaria %s-ean jokatzea proposatu dizu, baina oraindik ez duzu data onartu. Erabili ```bb2!accept``` ordua onartzeko."
     NEXTMATCH_TIME_DEFINED_RIVAL_NO_ACCEPTED = "%s egunean jokatzea proposatu duzu, baina zure aurkaria ez du topaketa onartu."
 
-    NEXTMATCH_TIME_NON_DEFINED = "Oraindik ez duzu topaketaren data zehaztu. Erabili ```bb2!register DD/MM/YYY HH:mm``` hori egiteko."
+    NEXTMATCH_TIME_NON_DEFINED = "Oraindik ez duzu topaketaren data zehaztu. Erabili ```bb2!date DD/MM/YYY HH:mm``` hori egiteko."
     NEXTMATCH_GAME_PLAYED = "Txanda hau jadanik jokatu duzu!"
     ERROR_ACCEPT_NOMATCH = "Ez daukazu partidurik onartzeke."
     ERROR_DEFAULT = "Errore bat gertatu da. Saiatu berriz beranduago."
     ERROR_ESTABLISHDATE_INVITED = "Zure aurkaria partiduaren ordua proposatu du. Erabili ```bb2!next``` proposatutako ordua berrikusteko eta ```bb2!accept``` berresteko."
     ERROR_ESTABLISHDATE_MATCHERROR = "Errorea: Ez da hurrengo partidua aurkitu."
-    ERROR_SYNTAX_ESTABLISHDATE = "Errorea: Komando baliogabea. Mesedez, erabili ```bb2!register DD/MM/YYYY HH:mm``` partiduaren data zehaztu edo eguneratzeko"
+    ERROR_SYNTAX_ESTABLISHDATE = "Errorea: Komando baliogabea. Mesedez, erabili ```bb2!date DD/MM/YYYY HH:mm``` partiduaren data zehaztu edo eguneratzeko"
     ERROR_NOT_CONFIGURED="Errorea: Ez dafo lehiaketarik konfiguratuta"
     ERROR_ALREADY_CONFIGURED = "Errorea: Zerbitzaria jadanik konfiguratuta dago. Berrabiarazi konfigurazioa liga berriro hautatzeko."
     ERROR_NOT_ALLOWED = "Errorea: Soilik administraitzaileek egin dezakete ekintza hau"
@@ -236,13 +236,13 @@ class CAT:
     NEXTMATCH_TIME_DEFINED_USER_NO_ACCEPTED = "Tú oponente te ha propuesto jugar el %s, pero aún no has aceptado. Utiliza ```bb2!accept``` para aceptar la hora."
     NEXTMATCH_TIME_DEFINED_RIVAL_NO_ACCEPTED = "Has propuesto jugar el %s, pero tu rival aún no ha aceptado el encuentro."
 
-    NEXTMATCH_TIME_NON_DEFINED = "Aún no habéis definido la fecha del encuentro. Usa ```bb2!register DD/MM/YYY HH:mm``` para hacerlo."
+    NEXTMATCH_TIME_NON_DEFINED = "Aún no habéis definido la fecha del encuentro. Usa ```bb2!date DD/MM/YYY HH:mm``` para hacerlo."
     NEXTMATCH_GAME_PLAYED = "¡Ya has jugado esta ronda!"
     ERROR_ACCEPT_NOMATCH = "No tienes ningún partido pendiente de ser aceptado."
     ERROR_DEFAULT = "Ha ocurrido un error. Vuelve a intentarlo más tarde."
     ERROR_ESTABLISHDATE_INVITED = "Tu rival ya ha propuesto la hora del partido. Utiliza ```bb2!next``` para revisar la hora propuest y ```bb2!accept``` para aceptar."
     ERROR_ESTABLISHDATE_MATCHERROR = "Error: No se ha encontrado el próximo partido."
-    ERROR_SYNTAX_ESTABLISHDATE = "Error: Comando inválido. Por favor, utilice ```bb2!register DD/MM/YYYY HH:mm``` para establecer o actualizar la hora del partido"
+    ERROR_SYNTAX_ESTABLISHDATE = "Error: Comando inválido. Por favor, utilice ```bb2!date DD/MM/YYYY HH:mm``` para establecer o actualizar la hora del partido"
     ERROR_NOT_CONFIGURED="Error: No hay ningún torneo configurado"
     ERROR_ALREADY_CONFIGURED = "Error: El servidor ya está configurado. Reinicie la configuración antes si desea volver a seleccionar la liga"
     ERROR_NOT_ALLOWED = "Error: Solo los administradores pueden realizar esta acción"
@@ -299,3 +299,79 @@ class CAT:
     NEAR_MATCH_DESCRIPTION = "Está previsto que el partido empiece a las %s, ¡Id buscando los pompones y a animar!"
     LANGUAGE_UPDATED = "¿Por qué quieres hablar lenguas muertas?"
     DM_SENDED = "Te he enviado la información por mensaje privado :)"
+
+class LLEIDATA:
+    SUCCESS_SERVER_CONFIGURED = "El servidor està configurat de puta mare, nen."
+    SUCCESS_SERVER_RESET = "La configuració ha set borrada, borinot."
+    SUCCESS_IAM_REGISTER = "T'has registrat correctament! Visca la terra!"
+    SUCCESS_IAM_UPDATE =  "Casun l'olla, el teu nom d'entrenador s'ha actualitzat!"
+    SUCCESS_ESTABLISHDATE_UPDATE= "La data per hostiarse s'ha actualitzat!"
+    SUCCESS_ESTABLISHDATE_REGISTER="La data per hostiarse està decidida!"
+    SUCCESS_MATCH_ACCEPTED = "Hostiada acceptada!"
+    NEXTMATCH_TIME_DEFINED = "La data per hostiarse s'ha modificat a %s."
+    NEXTMATCH_TIME_DEFINED_USER_NO_ACCEPTED = "El pixapins enemic ha proposat hostiarse el %s, pero no has acceptat el repte. No seràs un pixapins? Usa ```bb2!accept``` per dir que si, recoi."
+    NEXTMATCH_TIME_DEFINED_RIVAL_NO_ACCEPTED = "Has proposat hostiarte el %s, pero el pixapins enemic no ha acceptat encara, el tros de quòniam!"
+
+    NEXTMATCH_TIME_NON_DEFINED = "Aviam, sisquere decideix quin dia os hostiareu. Usa ```bb2!register DD/MM/YYYY HH:mm``` per establir-ho."
+    NEXTMATCH_GAME_PLAYED = "Carallot, que ja t'has hostiat!"
+    ERROR_ACCEPT_NOMATCH = "No hi ha hostiada que acceptar, brètol."
+    ERROR_DEFAULT = "L'estat españordo ens pirateija. Si us plau, vota més tard."
+    ERROR_ESTABLISHDATE_INVITED = "Has set invitat a hostiarse. Usa ```bb2!next``` per comprobar-ho i ```bb2!accept``` per acceptar."
+    ERROR_ESTABLISHDATE_MATCHERROR = "Espanya: próxima hostiada no trobada."
+    ERROR_SYNTAX_ESTABLISHDATE = "Espanya: pronom feble incorrecte. Usa ```bb2!regsiter DD/MM/YYYY HH:mm``` per establir o actualitzar la data per hostiarse."
+    ERROR_NOT_CONFIGURED="Espanya: no hi ha cap diada configurada."
+    ERROR_ALREADY_CONFIGURED = "Espanya: el servidor ja està configurat, abraçafanals."
+    ERROR_NOT_ALLOWED = "Espanya: nomès el govern central pot modificar això, separatista!"
+    ERROR_DATA_NOT_FOUND = "Espanya: data no trobada. Recorda seguir els passos correctes. Si ja ho has fet, pot ser que tardi un parell d'hores (o segles) a enviarte els papers de Salamanca."
+    ERROR_NOT_SCHEDULE = "Espanya: aquest tipus de diada no te horari, és com la dels Capgrossos de Mataró."
+    ERROR_SYNTAX_CONFIGURATION = "Espanya: pronom feble incorrecte. Usa ```bb2!configure \"nom de la lliga\" \"nom de la diada\"```, incloent les comilles, per configurar el servidor."
+    ERROR_SYNTAX_IAM = "Espanya: pronom feble incorrecte. Usa ```bb2!register {nom del cap de colla}``` per vincular el teu compte de Discord al teu nom de cap de colla."
+    ERROR_NOT_REGISTERED = "Espanya: no tens papers. Usa ```bb2!register {nom del cap de colla}``` per vincular el teu compte de Discord amb el teu nom de cap de colla i torna-ho a provar, botifarró."
+    ERROR_ALREADY_REGISTERED = "Espanya: el nom del cap de colla ja està registrat. Si és el teu nom, parla amb un membre del govern central."
+    ERROR_INCORRECT_ROUND="Espanya: la ronda '%s' no existeix, esgarrapacristos."
+    ERROR_LANGUAGE_INVALID = "Espanya: dialecte del català no implementat. T'aconsellem no canviar d'idioma, pel bé de la Terra."
+    ERROR_INVALID_COMMAND="Espanya: no tens ni puta idea del que dius. Escriu ```bb2!help``` i l'institut de nova història t'informarà."
+
+    BOT_THUMBAIL = "https://i.imgur.com/8eptQlM.png"
+
+    HELP_GENERIC_TITLE = "MHB del Blood Bowl"
+    HELP_GENERIC_DESCRIPTION = "Per veure una pàgina, afegeix el número després de la comanda bb2!help.\nT'ho escric tal cual per si no t'empanes: ```bb2!help 2```"
+    HELP_GENERIC_FIELDS = [
+        ("Capítol 1: configurar la diada", "Primeres passes amb el MHP")
+        ,("Capítol 2: comandes de Blood Bowl", "Esbrina les comandes del MHP després de configurar la teva diada")
+    ]
+
+    HELP_SETUP_TITLE = "Configuració: MHB del Blood Bowl"
+    HELP_SETUP_DESCRIPTION = "Segueix els passos per configurar la teva diada al servidor de Discord."
+    HELP_SETUP_FIELDS = [
+        ("#1 Permetre a GoblinSpy recuperar dades de la teva diada.", "Uneixte a http://www.mordrek.com/goblinSpy/web/activate.html?, fica el nom de la teva diada i clica a \"Activate\" button.")
+        ,("#2 Configura la diada al MHB", "Usa ```bb2!config \"Nom de la lliga\" \"nom de la diada\"```, incloent comilles, per configurar la diada.")
+        ,("#3 Instal.la les emoticones personalitzades", "Instal.la el paquet d'emoticones al teu servidor amb les icones de les raçes")
+    ]
+
+    HELP_COMMAND_TITLE = "Comandes - el MHB del Blood Bowl"
+    HELP_COMMAND_DESCRIPTION = "Usa les següents comandes per rebre informació de la diada configurada. Les hostiades més recents poden tardar en arribar, les estem amagant mentres juguem a la butifarra."
+    HELP_COMMAND_FIELDS = [
+        ("```bb2!teams```", "Llista totes les colles de la diada"),
+        ("```bb2!round <round number>```", "Mostra les hostiades de la jornada. Si no s'especifica ronda, ensenya l'actual."),
+        ("```bb2!register <coach name>```", "Vincula el teu compte de Discord al teu nick de BloodBowl, sustituint el teu nick pel teu Discord als missatges."),
+        ("```bb2!next```", "Mostra la teva següent hostiada i la data programada."),
+        ("```bb2!date <DD-MM-YYYY hh:mm>```", "Defineix una data per la teva propera hostiada."),
+        ("```bb2!accept```", "Accepta la data proposada pel teu pixapins enemic.")
+    ]
+
+    INFO_MATCHCREATED = "La teva próxima hostiada en %s lliga i %s diada és contra el pixapins %s.\nEl teu pixapins enemic ha proposta jugar el %s. Ves al servidor i usa ```bb2!acceptMatch``` per acceptar o ```bb2!declineMatch``` per dir que ets un garratibat"
+    INFO_MATCHUPDATED = "El teu pixapins enemic ha modificat la data de la próxima hostiada al %s lliga i %s diada a %s. Ves al servidor i usa ```bb2!acceptMatch``` per acceptar o ```bb2!declineMatch``` per dir que ets un pelacanyes."
+    INFO_USERACCEPT = "El pixapins enemic ha acceptat la teva proposta. La hostiada s'ha planificat per començar el %s"
+    ROUND= "Ronda %s"
+    TEAM_NAME = "Cap de colla"
+    COACH = "Última actualització el %s"
+    LAST_UPDATE = "Últuma actualización el %s"
+    LOCAL_TEAM = "Colla local"
+    VS = "VS"
+    VISITOR_TEAM = "Colla invitada"
+    NEXT_MATCH = "Próxima hostiada"
+    NEAR_MATCH_TITLE= "¡*%s VS %s* está a punto de comenzar!"
+    NEAR_MATCH_DESCRIPTION = "La hostiada començarà el %s, ojo cuidao que ja ho tenim això!"
+    LANGUAGE_UPDATED = "Collonut! Parlaré lo lleidatà a partir d'ara."
+    DM_SENDED = "T'he enviat una urna amb vots amb la info de l'ajuda!"
