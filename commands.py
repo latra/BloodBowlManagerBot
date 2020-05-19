@@ -99,7 +99,6 @@ class Commands:
 
                     goblin_token = self.goblin.get_goblin_token(command[1], command[2])
                     self.logs.write("RECUPERADO EL TOKEN %s" % goblin_token)
-                    self.logs.write("APUNTO DE ENTRAR A DATABASE" % goblin_token)
                     if self.crud.create_config(self.discord_id, command[1], command[2], goblin_token, self.ctx.message.channel.id): await self.ctx.send(content=self.language.SUCCESS_SERVER_CONFIGURED)
                     else: await self.ctx.send(content=self.language.ERROR_DEFAULT)
                 else:
