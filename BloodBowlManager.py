@@ -16,7 +16,6 @@ class Bot:
         self.crud = crud.Crud()
         @self.client.event
         async def on_ready():
-            print('Bot up!')
             self.schedule_reader.start()
 
         # Start command definitions
@@ -79,5 +78,4 @@ class Bot:
 if __name__ == "__main__":
     load_dotenv()
     bot = Bot().run()
-    print("como de async")
 
