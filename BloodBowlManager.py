@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from discord.ext.commands import CommandNotFound
 import os, commands, asyncio
 import sqlite3
 import goblinSpy, crud, constants.dictionaries as dictionaries
@@ -23,14 +24,18 @@ class Bot:
         #Help command
         async def help(ctx):
             await commands.Commands(ctx).help()
+
         @self.client.command()
         #Command to config a league on server
         async def config(ctx):
             await commands.Commands(ctx).configure()
         @self.client.command()
         #Command to delete the current configuration league
-        async def reset(ctx):
+        async def IWantReset(ctx):
             await commands.Commands(ctx).reset()
+        @self.client.command()
+        async def IWantDeleteUser(ctx):
+            await commands.Commands(ctx).user_delete()
         @self.client.command()
         #Command to show the current tournament teams
         async def teams(ctx):
@@ -55,6 +60,9 @@ class Bot:
         async def language(ctx):
             await commands.Commands(ctx).change_language()
     # Check near matches every 60 seconds.
+        @self.client.event
+        async def on_command_error(ctx, error):
+            await commands.Commands(ctx).default()
     @tasks.loop(seconds=60)
     async def schedule_reader(self):
         checked_time = datetime.datetime.now() + datetime.timedelta(minutes=30)

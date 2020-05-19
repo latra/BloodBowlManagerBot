@@ -25,6 +25,9 @@ class Commands:
         self.goblin = goblinSpy.GoblinSpy(self.goblin_token, self.crud)
     #region COMMANDS
     #region COMMAND - HELP
+    async def default(self):
+        await self.ctx.send(self.language.ERROR_INVALID_COMMAND)
+
     async def help(self):
         command = self.ctx.message.content.split()
         # Select witch help has to show
@@ -78,27 +81,21 @@ class Commands:
     #endregion
     
     async def configure(self):
-        self.logs.write("SE INICIA PROCESO DE CONFIGURE")
         #Configure the server with the passed parammeters
         if (self.ctx.message.author.guild_permissions.administrator):
             regex_exp = "\"(.*)\" \"(.*)\""
             command = re.split(regex_exp, self.ctx.message.content)
-            self.logs.write("PERMISOS VÁLIDOS")
             
             if self.goblin_token:
-                self.logs.write("YA LOGED")
 
                 # If the server is already configured, return an error
                 await self.ctx.send(content=self.language.ERROR_ALREADY_CONFIGURED)
             else:
-                self.logs.write("OK")
 
                 if len(command) >= 3:
                     # Add the server to DB and reutn OK
-                    self.logs.write("COMANDO OK")
 
                     goblin_token = self.goblin.get_goblin_token(command[1], command[2])
-                    self.logs.write("RECUPERADO EL TOKEN %s" % goblin_token)
                     if self.crud.create_config(self.discord_id, command[1], command[2], goblin_token, self.ctx.message.channel.id): await self.ctx.send(content=self.language.SUCCESS_SERVER_CONFIGURED)
                     else: await self.ctx.send(content=self.language.ERROR_DEFAULT)
                 else:
@@ -216,7 +213,19 @@ class Commands:
             if league.tournaments[self.tournament_name].ranking.ranking[team].coach.coach_name ==coach_name:
                 return True
         else: return False
-
+    async def user_delete(self):
+        # Delete the server configuration
+        #Only can be do it by an administrator
+        if (self.ctx.message.author.guild_permissions.administrator):
+            if (self.goblin_token):
+                command = self.ctx.message.content.split()
+                if len(command) > 1:
+                    if self.crud.delete_coach(self.discord_id, ''.join(command[1:])): await self.ctx.send(content=self.language.SUCCESS_SERVER_RESET)
+                    else: await self.ctx.send(content=self.language.ERROR_DEFAULT)
+            else:
+                await self.ctx.send(content=self.language.ERROR_NOT_CONFIGURED)
+        else:
+            await self.ctx.send(content=self.language.ERROR_NOT_ALLOWED)
     async def my_next_match(self):
         if not self.goblin.goblin_token:
             await self.ctx.send(content=self.language.ERROR_NOT_CONFIGURED)
@@ -277,9 +286,9 @@ class Commands:
                             # If it's created or updated, we will send a MD message notifying to the other user
                             invited_user = self.ctx.message.guild.get_member(rival_id)
                             if invited_user and db_programmed_time['action'] == 'CREATED':
-                                await invited_user.send(self.language.INFO_MATCHCREATED % command)
+                                await invited_user.send(self.language.INFO_MATCHCREATED % (self.league_name, self.tournament_name, str(self.ctx.author), command))
                             elif invited_user and db_programmed_time['action'] == 'UPDATED':
-                                await invited_user.send(self.language.INFO_MATCHUPDATED % command)
+                                await invited_user.send(self.language.INFO_MATCHUPDATED % (self.tournament_name, self.league_name, command))
                         else:
                             await self.ctx.send(content=self.language.ERROR_ESTABLISHDATE_MATCHERROR)
                     else:
@@ -304,16 +313,18 @@ class Commands:
                 await self.ctx.send(self.language.ERROR_ACCEPT_NOMATCH)
     #endregion
     async def change_language(self):
-        if not self.goblin.goblin_token:
-            await self.ctx.send(content=self.language.ERROR_NOT_CONFIGURED)
-        else:
-            command = self.ctx.message.content.split()
-            if len(command) > 1 and dictionaries.get_language(command[1]):
-                if self.crud.change_language(self.ctx.message.author.guild.id, command[1]):
-                    self.language = dictionaries.get_language(command[1])
-                    await self.ctx.send(self.language.LANGUAGE_UPDATED)
-                else:
-                    await self.ctx.send(self.language.ERROR_DEFAULT)
+        if (self.ctx.message.author.guild_permissions.administrator):
+            if not self.goblin.goblin_token:
+                await self.ctx.send(content=self.language.ERROR_NOT_CONFIGURED)
             else:
-                await self.ctx.send(self.language.ERROR_LANGUAGE_INVALID)
-        
+                command = self.ctx.message.content.split()
+                if len(command) > 1 and dictionaries.get_language(command[1]):
+                    if self.crud.change_language(self.ctx.message.author.guild.id, command[1]):
+                        self.language = dictionaries.get_language(command[1])
+                        await self.ctx.send(self.language.LANGUAGE_UPDATED)
+                    else:
+                        await self.ctx.send(self.language.ERROR_DEFAULT)
+                else:
+                    await self.ctx.send(self.language.ERROR_LANGUAGE_INVALID)
+        else:
+            await self.ctx.send(content=self.language.ERROR_NOT_ALLOWED)

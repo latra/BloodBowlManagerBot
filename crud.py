@@ -13,7 +13,6 @@ class Crud:
         self.log.write("Consulta creada: %s" % query)
         cursor = self.database.cursor()
         cursor.execute(query)
-        self.log.write("Consulta ejecutada")
 
         result = cursor.fetchone()
         cursor.close()
@@ -34,9 +33,7 @@ class Crud:
             cursor = self.database.cursor()
             cursor.execute(query)
             self.database.commit()
-            self.log.write("Consulta ejecutada")
             cursor.close()
-
             return True
         except:
             self.log.write("Error al realizar la accion. ERROR: %s\n" %sys.exc_info()[0] )
@@ -50,8 +47,6 @@ class Crud:
 
             cursor.execute(query)
             self.database.commit()
-            self.log.write("Consulta ejecutada")
-
             cursor.close()
             return True
         except:
@@ -93,6 +88,16 @@ class Crud:
             return {'status':True, 'action':action}
         except:
             return {'status':False, 'action':None}
+    def delete_coach(self, discord_server_id, bb_coach_name):
+        query = "DELETE FROM USERS WHERE discordServerId=%i AND coachName='%s';" % (discord_server_id, bb_coach_name)
+        try:
+            cursor = self.database.cursor()
+            cursor.execute(query)
+            self.database.commit()
+            cursor.close()
+            return True
+        except:
+            return False
     def recover_match_programmed_time(self, discord_server_id, match_contest_id = None, invited_discord_user_id = None):
         #Recovers a match using the match_id or the invited user_id
         if match_contest_id:
