@@ -4,3 +4,4 @@ class Log:
     def write(self, text):
         file = open(self.file_name, "x")
         file.write(text + '\n')
+        file.close()
