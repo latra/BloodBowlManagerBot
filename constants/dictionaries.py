@@ -16,6 +16,6 @@ def get_ranking_emoji(position_num):
     else: return "#%i" % position_num
 
 def get_language(language):
-    languages_dict = {'EN':texts.EN(), 'ES':texts.ES()}
+    languages_dict = {'EN':texts.EN(), 'ES':texts.ES(), 'EU':texts.EU, 'CAT':texts.CAT}
     return languages_dict.get(language)
     
