@@ -59,7 +59,10 @@ class Bot:
         @self.client.command()
         async def language(ctx):
             await commands.Commands(ctx).change_language()
-    # Check near matches every 60 seconds.
+        @self.client.command()
+        async def close(ctx):
+            await commands.Commands(ctx).delete_last_bot_message()        
+        # Check near matches every 60 seconds.
         @self.client.event
         async def on_command_error(ctx, error):
             if isinstance(error, discord_commands.CommandError): 

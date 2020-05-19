@@ -332,3 +332,10 @@ class Commands:
                     await self.ctx.send(self.language.ERROR_LANGUAGE_INVALID)
         else:
             await self.ctx.send(content=self.language.ERROR_NOT_ALLOWED)
+
+    async def delete_last_bot_message(self):
+        async for message in self.ctx.message.channel.history(limit=5):
+            if message.author.id == int(os.getenv('DISCORD_ID')):
+                await message.delete()
+                await self.ctx.message.delete()
+                break
