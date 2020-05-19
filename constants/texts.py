@@ -71,7 +71,7 @@ class EN:
     NEAR_MATCH_TITLE= "%s VS %s"
     NEAR_MATCH_DESCRIPTION = "The match will start at %s, stay tuned for the match!"
     LANGUAGE_UPDATED = "Ok! I will speak in English from now on."
-
+    DM_SENDED  = "Sent you a DM containing the help message!"
 class ES:
     SUCCESS_SERVER_CONFIGURED = "¡Servidor configurado correctamente!"
     SUCCESS_SERVER_RESET = "¡Se ha reiniciado la configuración del servidor!"
@@ -146,3 +146,4 @@ class ES:
     NEAR_MATCH_TITLE= "¡*%s VS %s* está a punto de comenzar!"
     NEAR_MATCH_DESCRIPTION = "Está previsto que el partido empiece a las %s, ¡Id buscando los pompones y a animar!"
     LANGUAGE_UPDATED = "Ok! Pues a hablar la lengua del imperio, 0 dramas."
+    DM_SENDED = "Te he enviado la información por mensaje privado :)"

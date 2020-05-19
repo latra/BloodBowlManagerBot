@@ -52,8 +52,8 @@ class Commands:
         for field in self.language.HELP_GENERIC_FIELDS:
             embed.add_field(name= field[0], value=field[1], inline=False)
 
-        await self.ctx.send(embed = embed)
-
+        await self.ctx.send(self.language.DM_SENDED, delete_after=20)
+        await self.ctx.author.send(embed = embed)
     async def help_setup(self):
         # Shows how to setup the bot on a new server
         embed = discord.Embed(
@@ -65,7 +65,8 @@ class Commands:
         for field in self.language.HELP_SETUP_FIELDS:
             embed.add_field(name= field[0], value=field[1], inline=False)
 
-        await self.ctx.send(embed = embed)
+        await self.ctx.send(self.language.DM_SENDED, delete_after=20)
+        await self.ctx.author.send(embed = embed)
     async def help_commands(self):
         # Shows the available commands
         embed = discord.Embed(
@@ -77,7 +78,8 @@ class Commands:
         for field in self.language.HELP_COMMAND_FIELDS:
             embed.add_field(name= field[0], value=field[1], inline=False)
 
-        await self.ctx.send(embed = embed)
+        await self.ctx.send(self.language.DM_SENDED, delete_after=20)
+        await self.ctx.author.send(embed = embed)
     #endregion
     
     async def configure(self):
